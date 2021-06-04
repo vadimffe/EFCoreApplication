@@ -5,7 +5,9 @@ namespace EFCoreApplication.Data
 {
   public class SQLiteDBContext : DbContext
   {
-    public virtual DbSet<ProjectModel> Appsettings { get; set; }
+    public virtual DbSet<ProjectModel> ProjectModel { get; set; }
+    //public virtual DbSet<ProjectScheduleModel> ProjectScheduleModel { get; set; }
+    public virtual DbSet<TaskModel> TaskModel { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite(@"Data Source=sqlitedemo.db");
@@ -13,6 +15,12 @@ namespace EFCoreApplication.Data
     protected override void OnModelCreating(ModelBuilder builder)
     {
       base.OnModelCreating(builder);
+
+      // configures one-to-many relationship
+      builder.Entity<TaskModel>()
+          .HasOne<ProjectModel>(s => s.ProjectModel)
+          .WithMany(g => g.Tasks)
+          .HasForeignKey(k => k.ProjectId);
     }
   }
 }
