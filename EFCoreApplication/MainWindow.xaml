@@ -68,7 +68,7 @@
       <DataGrid.Columns>
         <DataGridTextColumn MinWidth="150" Header="Project number" Binding="{Binding ProjectNumber}" />
         <DataGridTextColumn MinWidth="150" Header="Text" Binding="{Binding Text}" />
-        <DataGridTextColumn MinWidth="100" Header="Start date" Binding="{Binding StartDate.Date}"/>
+        <DataGridTextColumn MinWidth="100" Header="Start date" Binding="{Binding StartDate, StringFormat=d}"/>
         <DataGridTextColumn MinWidth="100" Header="Duration" Binding="{Binding Duration}"/>
         <DataGridTextColumn MinWidth="100" Header="Progress" Binding="{Binding Progress}"/>
         <DataGridTextColumn MinWidth="150" Header="Type" Binding="{Binding Type}"/>
