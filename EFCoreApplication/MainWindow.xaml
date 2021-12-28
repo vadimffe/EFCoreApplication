@@ -7,7 +7,7 @@
         xmlns:viewModels="clr-namespace:EFCoreApplication.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
-        Title="MainWindow" Height="450" Width="800"
+        Title="Simple EFCore Application" Height="450" Width="800"
         FontSize="14" 
         FontFamily="Roboto">
 
@@ -28,6 +28,8 @@
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="1*" />
       <RowDefinition Height="10*" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
@@ -40,13 +42,13 @@
     </Grid.ColumnDefinitions>
 
     <TextBlock Text="New project number:" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" />
-    <TextBlock Text="Select project number:" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" />
-    <TextBlock Text="Project type:" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" />
+    <TextBlock Text="Select project number:" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" />
+    <TextBlock Text="Project type:" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" />
 
     <TextBox Grid.Row="1" Text="{Binding ProjectNumber}" Grid.Column="2" VerticalAlignment="Center"></TextBox>
-    <TextBox Grid.Row="3" Text="{Binding ProjectType}" Grid.Column="2" VerticalAlignment="Center"></TextBox>
+    <TextBox Grid.Row="4" Text="{Binding ProjectType}" Grid.Column="2" VerticalAlignment="Center"></TextBox>
 
-    <ComboBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" 
+    <ComboBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" 
     ItemsSource="{Binding ProjectNumberList}" SelectedItem="{Binding SelectedProjectNumber}" >
       <ComboBox.ItemTemplate>
         <DataTemplate>
@@ -57,11 +59,11 @@
       </ComboBox.ItemTemplate>
     </ComboBox>
 
-    <Button Content="Add tasks" Command="{Binding AddTaskToDatabaseCommand}" Grid.Row="1" Grid.Column="5" Margin="20,2,20,2"/>
+    <Button Content="Add task" Command="{Binding AddTaskToDatabaseCommand}" Grid.Row="3" Grid.Column="3" VerticalAlignment="Top" Grid.RowSpan="2" Margin="20,2,20,2"/>
     <!--<Button Content="Refresh" Grid.Row="2" Grid.Column="5" Margin="20,2,20,2"/>-->
-    <Button Content="Add" Command="{Binding AddProjectToDatabaseCommand}" Grid.Row="1" Grid.Column="3" Margin="20,2,20,2"/>
+    <Button Content="Add" Command="{Binding AddProjectToDatabaseCommand}" Grid.Row="1" Grid.Column="3" VerticalAlignment="Top" Grid.RowSpan="2" Margin="20,2,20,2"/>
 
-    <DataGrid x:Name="DataGrid" Grid.Row="4" Grid.ColumnSpan="6" ItemsSource="{Binding TasksTable}" AutoGenerateColumns="False"
+    <DataGrid x:Name="DataGrid" Grid.Row="6" Grid.ColumnSpan="6" ItemsSource="{Binding TasksTable}" AutoGenerateColumns="False"
     Background="Transparent" RowBackground="Transparent" IsReadOnly="True" CanUserAddRows="False">
       <DataGrid.Columns>
         <DataGridTextColumn MinWidth="150" Header="Project number" Binding="{Binding ProjectNumber}" />

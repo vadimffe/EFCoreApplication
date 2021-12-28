@@ -4,7 +4,16 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>datenbank.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icon\datenbank.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="datenbank.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MaterialDesignColors" Version="2.0.4" />
