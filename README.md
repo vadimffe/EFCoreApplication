@@ -3,6 +3,7 @@ Simple EFCore application without any special reason.
 
 * MVVM
 * .NET 6
+* SQLight
 * WPF Material Design
 * WPF
 
