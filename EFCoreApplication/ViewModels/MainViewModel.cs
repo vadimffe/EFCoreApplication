@@ -1,6 +1,7 @@
 ﻿using EFCoreApplication.Commands;
 using EFCoreApplication.Data;
 using EFCoreApplication.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,102 +16,102 @@ namespace EFCoreApplication.ViewModels
     public MainViewModel()
     {
       this.InitializeProjectList();
+      this.InitializeTaskList();
     }
 
     public ICommand AddProjectToDatabaseCommand => new RelayCommand(param => this.AddProjectToDatabase());
 
-    public ICommand AddTasksToDatabaseCommand => new RelayCommand(param => this.AddTasksToDatabase());
+    public ICommand AddTaskToDatabaseCommand => new RelayCommand(param => this.AddTaskToDatabase());
 
-    private void AddTasksToDatabase()
+    private void AddTaskToDatabase()
     {
       Random rnd = new Random();
 
-      using (var db = new SQLiteDBContext())
+      using SQLiteDBContext context = new SQLiteDBContext();
+      if (this.SelectedProjectNumber != null && this.SelectedProjectNumber.Id != Guid.Empty)
       {
-        if (this.SelectedProjectNumber!= null)
+        Guid projectId = context.Projects.FirstOrDefault(c => c.ProjectNumber == this.selectedProjectNumber.ProjectNumber).Id;
+
+        context.Tasks.Add(new TaskModel
         {
-          var tasks = db.Set<TaskModel>();
+          ProjectNumber = this.SelectedProjectNumber.ProjectNumber,
+          Text = string.Format("{0} {1}", "Random task number", rnd.Next(1, 55)),
+          StartDate = DateTime.Now,
+          Type = this.projectType,
+          Duration = 2,
+          ProjectId = projectId,
+        }) ;
 
-          for (int i = 1; i < rnd.Next(6, 15); i++)
-          {
-            tasks.Add(new TaskModel
-            {
-              ProjectNumber = this.SelectedProjectNumber,
-              Text = string.Format("{0} {1}", "Task text", i),
-              StartDate = DateTime.Now,
-              Duration = 2 + i,
-            });
-          }
-
-          db.SaveChangesAsync();
-        }
+        context.SaveChangesAsync();
       }
+
+      this.ProjectType = string.Empty; 
+
+      this.InitializeTaskList();
     }
 
     private void InitializeProjectList()
     {
-      using (var db = new SQLiteDBContext())
+      using SQLiteDBContext context = new SQLiteDBContext();
+      IQueryable<ProjectModel> projectNumbers = context.Projects.Select(x => new ProjectModel
       {
-        var projectNumbers = from projectDB in db.ProjectModel
-                             select projectDB.ProjectNumber;
+        Id = x.Id,
+        ProjectName = x.ProjectName,
+        ProjectNumber = x.ProjectNumber,
+      });
 
-        List<string> queryResults = new List<string>();
-        queryResults.AddRange(projectNumbers);
-
-        this.ProjectNumberList = new ObservableCollection<string>(queryResults);
-      }
+      this.ProjectNumberList = new ObservableCollection<ProjectModel>(projectNumbers);
     }
 
     private void InitializeTaskList()
     {
-      using (var db = new SQLiteDBContext())
+      using SQLiteDBContext context = new SQLiteDBContext();
+      List<TaskModel> tasks = context.Tasks.Select(s => new TaskModel
       {
-        var projectNumbers = from projectDB in db.TaskModel
-                             where projectDB.ProjectNumber == this.SelectedProjectNumber
-                             select new TaskModel { 
-                               Id = projectDB.Id,
-                               ProjectNumber = projectDB.ProjectNumber,
-                               StartDate = projectDB.StartDate,
-                             };
+        Id = s.Id,
+        Duration = s.Duration,
+        ParentId = s.ParentId,
+        Progress = s.Progress,
+        ProjectNumber = context.Projects.FirstOrDefault(c => c.Id == s.ProjectId).ProjectNumber,
+        ProjectId = s.ProjectId,
+        StartDate = s.StartDate,
+        Text = s.Text,
+        Type = s.Type,
+      }).ToList();
 
-        List<TaskModel> queryResults = new List<TaskModel>();
-        queryResults.AddRange(projectNumbers);
-
-        this.ProjectTable = new ObservableCollection<TaskModel>(queryResults);
-      }
+      this.TasksTable = new ObservableCollection<TaskModel>(tasks);
     }
 
     private void AddProjectToDatabase()
     {
-      using (var db = new SQLiteDBContext())
+      using (SQLiteDBContext context = new SQLiteDBContext())
       {
-        if (this.ProjectNumber != null)
+        if (!string.IsNullOrEmpty(this.ProjectNumber))
         {
-          var projects = db.Set<ProjectModel>();
-          projects.Add(new ProjectModel { ProjectNumber = this.ProjectNumber });
+          context.Projects.Add(new ProjectModel { ProjectNumber = this.ProjectNumber });
 
-          db.SaveChangesAsync();
+          context.SaveChangesAsync();
         }
       }
 
-      InitializeProjectList();
+      this.InitializeProjectList();
 
       this.ProjectNumber = string.Empty;
     }
 
-    private ObservableCollection<TaskModel> projectTable;
-    public ObservableCollection<TaskModel> ProjectTable
+    private ObservableCollection<TaskModel> tasksTable;
+    public ObservableCollection<TaskModel> TasksTable
     {
-      get => this.projectTable;
+      get => this.tasksTable;
       set
       {
-        this.projectTable = value;
+        this.tasksTable = value;
         this.OnPropertyChanged();
       }
     }
 
-    private string selectedProjectNumber;
-    public string SelectedProjectNumber
+    private ProjectModel selectedProjectNumber;
+    public ProjectModel SelectedProjectNumber
     {
       get => this.selectedProjectNumber;
       set
@@ -132,8 +133,19 @@ namespace EFCoreApplication.ViewModels
       }
     }
 
-    private ObservableCollection<string> projectNumberList;
-    public ObservableCollection<string> ProjectNumberList
+    private string projectType;
+    public string ProjectType
+    {
+      get => this.projectType;
+      set
+      {
+        this.projectType = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private ObservableCollection<ProjectModel> projectNumberList;
+    public ObservableCollection<ProjectModel> ProjectNumberList
     {
       get => this.projectNumberList;
       set

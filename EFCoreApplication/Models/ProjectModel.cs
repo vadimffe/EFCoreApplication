@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EFCoreApplication.Models
 {
   public class ProjectModel
   {
-    [Key]
-    public int ProjectId { get; set; }
+    public Guid Id { get; set; }
     public string ProjectName { get; set; }
     public string ProjectNumber { get; set; }
 

@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace EFCoreApplication.Migrations
 {
     [DbContext(typeof(SQLiteDBContext))]
@@ -13,14 +15,13 @@ namespace EFCoreApplication.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.6");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
 
             modelBuilder.Entity("EFCoreApplication.Models.ProjectModel", b =>
                 {
-                    b.Property<int>("ProjectId")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectName")
                         .HasColumnType("TEXT");
@@ -28,16 +29,16 @@ namespace EFCoreApplication.Migrations
                     b.Property<string>("ProjectNumber")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("ProjectId");
+                    b.HasKey("Id");
 
-                    b.ToTable("ProjectModel");
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("EFCoreApplication.Models.TaskModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Duration")
                         .HasColumnType("INTEGER");
@@ -48,8 +49,8 @@ namespace EFCoreApplication.Migrations
                     b.Property<decimal>("Progress")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ProjectNumber")
                         .HasColumnType("TEXT");
@@ -67,7 +68,7 @@ namespace EFCoreApplication.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("TaskModel");
+                    b.ToTable("Tasks");
                 });
 
             modelBuilder.Entity("EFCoreApplication.Models.TaskModel", b =>
