@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCoreApplication.Migrations
 {
     [DbContext(typeof(SQLiteDBContext))]
-    [Migration("20211228175022_Initial")]
+    [Migration("20211229084815_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,8 +48,8 @@ namespace EFCoreApplication.Migrations
                     b.Property<int?>("ParentId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Progress")
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Progress")
+                        .HasColumnType("REAL");
 
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("TEXT");

@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EFCoreApplication"
-        xmlns:viewModels="clr-namespace:EFCoreApplication.ViewModels"
+        xmlns:viewModels="clr-namespace:EFCoreApplication.ViewModels" 
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
-        Title="Simple EFCore Application" Height="450" Width="800"
+        Title="Simple EFCore Application" Height="550" Width="900"
         FontSize="14" 
         FontFamily="Roboto">
 
@@ -36,6 +37,7 @@
       <ColumnDefinition Width="0.05*" />
       <ColumnDefinition Width="1*" />
       <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="0.05*" />
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="*" />
@@ -43,10 +45,20 @@
 
     <TextBlock Text="New project number:" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" />
     <TextBlock Text="Select project number:" Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" />
-    <TextBlock Text="Task type:" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" />
+    <TextBlock Text="Text:" Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" />
+    <TextBlock Text="Task type:" Grid.Row="5" Grid.Column="4" VerticalAlignment="Center" />
+    <TextBlock Text="Start Date:" Grid.Row="5" Grid.Column="1" VerticalAlignment="Center" />
+    <TextBlock Text="Duration:" Grid.Row="3" Grid.Column="4" VerticalAlignment="Center" />
+    <TextBlock Text="Progress:" Grid.Row="4" Grid.Column="4" VerticalAlignment="Center" />
+    <TextBlock Text="{Binding ProgressValue}" Margin="20,0,0,0" Grid.Row="4" Grid.Column="6" VerticalAlignment="Center" />
 
     <TextBox Grid.Row="1" Text="{Binding ProjectNumber}" Grid.Column="2" VerticalAlignment="Center"></TextBox>
-    <TextBox Grid.Row="4" Text="{Binding ProjectType}" Grid.Column="2" VerticalAlignment="Center"></TextBox>
+    <TextBox Grid.Row="4" Text="{Binding ProjectText}" Grid.Column="2" VerticalAlignment="Center"></TextBox>
+    <DatePicker Grid.Row="5" SelectedDate="{Binding StartDate}" Grid.Column="2" VerticalAlignment="Center"></DatePicker>
+    <ComboBox Grid.Row="3" ItemsSource="{Binding NumList}" SelectedValue="{Binding Duration}" Grid.Column="5" VerticalAlignment="Center"></ComboBox>
+    <Slider Grid.Row="4" Grid.Column="5" Value="{Binding Progress}" VerticalAlignment="Center"></Slider>
+    <TextBox Grid.Row="5" Text="{Binding ProjectType}" Grid.Column="5" VerticalAlignment="Center"></TextBox>
+
 
     <ComboBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" 
     ItemsSource="{Binding ProjectNumberList}" SelectedItem="{Binding SelectedProjectNumber}" >
@@ -59,19 +71,24 @@
       </ComboBox.ItemTemplate>
     </ComboBox>
 
-    <Button Content="Add task" Command="{Binding AddTaskToDatabaseCommand}" Grid.Row="3" Grid.Column="3" VerticalAlignment="Top" Grid.RowSpan="2" Margin="20,2,20,2"/>
+    <Button Content="Add task" Command="{Binding AddTaskToDatabaseCommand}" Grid.Row="3" Grid.Column="6" VerticalAlignment="Top" Grid.RowSpan="2" Margin="20,2,20,2"/>
     <!--<Button Content="Refresh" Grid.Row="2" Grid.Column="5" Margin="20,2,20,2"/>-->
-    <Button Content="Add" Command="{Binding AddProjectToDatabaseCommand}" Grid.Row="1" Grid.Column="3" VerticalAlignment="Top" Grid.RowSpan="2" Margin="20,2,20,2"/>
+    <Button Content="Add" Command="{Binding AddProjectToDatabaseCommand}" Grid.Row="1" Grid.Column="4" VerticalAlignment="Top" Grid.RowSpan="2" Margin="20,2,20,2"/>
 
-    <DataGrid x:Name="DataGrid" Grid.Row="6" Grid.ColumnSpan="6" ItemsSource="{Binding TasksTable}" AutoGenerateColumns="False"
-    Background="Transparent" RowBackground="Transparent" IsReadOnly="True" CanUserAddRows="False">
+    <DataGrid x:Name="DataGrid" Grid.Row="6" Grid.ColumnSpan="7" ItemsSource="{Binding TasksTable}" AutoGenerateColumns="False"
+    Background="Transparent" RowBackground="Transparent" IsReadOnly="True" CanUserAddRows="False" CanUserReorderColumns="False">
+      <DataGrid.RowStyle>
+        <Style TargetType="DataGridRow">
+          <Setter Property="IsHitTestVisible" Value="False"/>
+        </Style>
+      </DataGrid.RowStyle>
       <DataGrid.Columns>
         <DataGridTextColumn MinWidth="150" Header="Project number" Binding="{Binding ProjectNumber}" />
-        <DataGridTextColumn MinWidth="150" Header="Text" Binding="{Binding Text}" />
+        <DataGridTextColumn MinWidth="300" Header="Text" Binding="{Binding Text}" />
         <DataGridTextColumn MinWidth="100" Header="Start date" Binding="{Binding StartDate, StringFormat=d}"/>
         <DataGridTextColumn MinWidth="100" Header="Duration" Binding="{Binding Duration}"/>
-        <DataGridTextColumn MinWidth="100" Header="Progress" Binding="{Binding Progress}"/>
-        <DataGridTextColumn MinWidth="150" Header="Type" Binding="{Binding Type}"/>
+        <DataGridTextColumn MinWidth="100" Header="Progress %" Binding="{Binding Progress}"/>
+        <DataGridTextColumn MinWidth="120" Header="Type" Binding="{Binding Type}"/>
       </DataGrid.Columns>
       <DataGrid.RowDetailsTemplate>
         <DataTemplate>

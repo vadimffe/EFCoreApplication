@@ -15,6 +15,10 @@ namespace EFCoreApplication.ViewModels
   {
     public MainViewModel()
     {
+      this.startDate = DateTime.Now;
+      this.numList = new List<int>();
+
+      this.InitializeNumList();
       this.InitializeProjectList();
       this.InitializeTaskList();
     }
@@ -35,17 +39,19 @@ namespace EFCoreApplication.ViewModels
         context.Tasks.Add(new TaskModel
         {
           ProjectNumber = this.SelectedProjectNumber.ProjectNumber,
-          Text = string.Format("{0} {1}", "Random task number", rnd.Next(1, 55)),
-          StartDate = DateTime.Now,
+          Text = this.projectText,
+          StartDate = this.startDate,
           Type = this.projectType,
-          Duration = 2,
+          Duration = this.duration,
+          Progress = this.progress,
           ProjectId = projectId,
-        }) ;
+        });
 
         context.SaveChangesAsync();
       }
 
-      this.ProjectType = string.Empty; 
+      this.ProjectType = string.Empty;
+      this.ProjectText = string.Empty;
 
       this.InitializeTaskList();
     }
@@ -71,7 +77,7 @@ namespace EFCoreApplication.ViewModels
         Id = s.Id,
         Duration = s.Duration,
         ParentId = s.ParentId,
-        Progress = s.Progress,
+        Progress = Math.Round(s.Progress * 10),
         ProjectNumber = context.Projects.FirstOrDefault(c => c.Id == s.ProjectId).ProjectNumber,
         ProjectId = s.ProjectId,
         StartDate = s.StartDate,
@@ -80,6 +86,14 @@ namespace EFCoreApplication.ViewModels
       }).ToList();
 
       this.TasksTable = new ObservableCollection<TaskModel>(tasks);
+    }
+
+    private void InitializeNumList()
+    {
+      this.numList.Add(1);
+      this.numList.Add(2);
+      this.numList.Add(3);
+      this.numList.Add(4);
     }
 
     private void AddProjectToDatabase()
@@ -133,6 +147,62 @@ namespace EFCoreApplication.ViewModels
       }
     }
 
+    private string projectText;
+    public string ProjectText
+    {
+      get => this.projectText;
+      set
+      {
+        this.projectText = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private DateTime startDate;
+    public DateTime StartDate
+    {
+      get => this.startDate;
+      set
+      {
+        this.startDate = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private int duration;
+    public int Duration
+    {
+      get => this.duration;
+      set
+      {
+        this.duration = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private double progress;
+    public double Progress
+    {
+      get => this.progress;
+      set
+      {
+        this.progress = value;
+        this.ProgressValue = string.Concat(Math.Round(value * 10).ToString(), " %");
+        this.OnPropertyChanged();
+      }
+    }
+
+    private string progressValue;
+    public string ProgressValue
+    {
+      get => this.progressValue;
+      set
+      {
+        this.progressValue = value;
+        this.OnPropertyChanged();
+      }
+    }
+
     private string projectType;
     public string ProjectType
     {
@@ -140,6 +210,17 @@ namespace EFCoreApplication.ViewModels
       set
       {
         this.projectType = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private List<int> numList;
+    public List<int> NumList
+    {
+      get => this.numList;
+      set
+      {
+        this.numList = value;
         this.OnPropertyChanged();
       }
     }

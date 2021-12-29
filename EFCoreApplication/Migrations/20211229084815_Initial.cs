@@ -31,7 +31,7 @@ namespace EFCoreApplication.Migrations
                     Text = table.Column<string>(type: "TEXT", nullable: true),
                     StartDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Duration = table.Column<int>(type: "INTEGER", nullable: false),
-                    Progress = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Progress = table.Column<double>(type: "REAL", nullable: false),
                     ParentId = table.Column<int>(type: "INTEGER", nullable: true),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
                     ProjectId = table.Column<Guid>(type: "TEXT", nullable: false)

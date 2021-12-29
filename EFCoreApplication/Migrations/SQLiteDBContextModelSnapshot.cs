@@ -46,8 +46,8 @@ namespace EFCoreApplication.Migrations
                     b.Property<int?>("ParentId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Progress")
-                        .HasColumnType("TEXT");
+                    b.Property<double>("Progress")
+                        .HasColumnType("REAL");
 
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("TEXT");
