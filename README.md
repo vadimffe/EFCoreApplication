@@ -8,5 +8,6 @@ Simple EFCore application without any special reason.
 * WPF
 
 
-![image](https://user-images.githubusercontent.com/72302395/147603025-05bc3a37-15a5-497d-aaa4-a6efb0bd4351.png)
+![image](https://user-images.githubusercontent.com/72302395/147677781-922fcab9-d007-4c52-92a4-5520e9b600a7.png)
+
 
