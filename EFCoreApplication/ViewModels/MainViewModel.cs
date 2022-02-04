@@ -1,15 +1,18 @@
 ﻿using EFCoreApplication.Commands;
 using EFCoreApplication.Data;
 using EFCoreApplication.Models;
+using EFCoreApplication.UserControls;
 using LiveChartsCore;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
+using MaterialDesignThemes.Wpf;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace EFCoreApplication.ViewModels
@@ -33,7 +36,7 @@ namespace EFCoreApplication.ViewModels
       this.InitializeGaugeChart();
     }
 
-    public ICommand AddProjectToDatabaseCommand => new RelayCommand(param => this.AddProjectToDatabase());
+    public ICommand AddProjectToDatabaseCommand => new AsyncRelayCommand(param => this.AddProjectToDatabase());
     public ICommand AddTaskToDatabaseCommand => new RelayCommand(param => this.AddTaskToDatabase());
 
     private void AddTaskToDatabase()
@@ -135,9 +138,9 @@ namespace EFCoreApplication.ViewModels
     private void InitializeGaugeChart()
     {
       IEnumerable<ISeries> Series = new List<ISeries>
-                {
-                    new PieSeries<double> { Values = new List<double> { 40 }, Name = "a" },
-                };
+      {
+          new PieSeries<double> { Values = new List<double> { 40 }, Name = "a" },
+      };
 
       IEnumerable<ISeries> projectNumbers = this.TasksTable.Select(x =>
       new PieSeries<double>
@@ -157,21 +160,55 @@ namespace EFCoreApplication.ViewModels
       this.numList.Add(5);
     }
 
-    private void AddProjectToDatabase()
+    private async Task AddProjectToDatabase()
     {
-      using (SQLiteDBContext context = new SQLiteDBContext())
+      if (!string.IsNullOrEmpty(this.ProjectNumber))
       {
-        if (!string.IsNullOrEmpty(this.ProjectNumber))
+        using (SQLiteDBContext context = new SQLiteDBContext())
         {
-          context.Projects.Add(new ProjectModel { ProjectNumber = this.ProjectNumber });
+          if (!string.IsNullOrEmpty(this.ProjectNumber))
+          {
+            context.Projects.Add(new ProjectModel { ProjectNumber = this.ProjectNumber });
 
-          context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+          }
         }
+
+        this.InitializeProjectList();
+
+        this.ProjectNumber = string.Empty;
       }
+      else
+      {
+        SampleDialog view = new SampleDialog
+        {
+          DataContext = new SampleDialogViewModel()
+        };
 
-      this.InitializeProjectList();
+        object result = await DialogHost.Show(view, "MainDialogHost", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+      }
+    }
 
-      this.ProjectNumber = string.Empty;
+    private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
+    {
+      Console.WriteLine("You could intercept the open and affect the dialog using eventArgs.Session.");
+    }
+
+    private void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+    {
+      if ((bool)eventArgs.Parameter == false) return;
+
+      //OK, lets cancel the close...
+      eventArgs.Cancel();
+
+      //...now, lets update the "session" with some new content!
+      eventArgs.Session.UpdateContent(new SampleProgressDialog());
+      //note, you can also grab the session when the dialog opens via the DialogOpenedEventHandler
+
+      //lets run a fake operation for 3 seconds then close this baby.
+      Task.Delay(TimeSpan.FromSeconds(3))
+          .ContinueWith((t, _) => eventArgs.Session.Close(false), null,
+              TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     private ObservableCollection<TaskModel> tasksTable;

@@ -18,6 +18,7 @@
   </Window.Resources>
 
   <Grid DataContext="{StaticResource MainViewModelDataContext}">
+
     <Grid.Background>
       <LinearGradientBrush StartPoint="0,0" EndPoint="1,2">
         <GradientStop Color="White" Offset="0.0" />
@@ -26,14 +27,14 @@
       </LinearGradientBrush>
     </Grid.Background>
     <Grid.RowDefinitions>
-      <RowDefinition Height="200" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="1.2*" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="1.2*" />
-      <RowDefinition Height="1.2*" />
-      <RowDefinition Height="1.2*" />
-      <RowDefinition Height="1.2*" />
+      <RowDefinition Height="5*" />
+      <RowDefinition Height="20" />
+      <RowDefinition Height="30" />
+      <RowDefinition Height="30" />
+      <RowDefinition Height="30" />
+      <RowDefinition Height="30" />
+      <RowDefinition Height="30" />
+      <RowDefinition Height="30" />
       <RowDefinition Height="10*" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
@@ -123,5 +124,8 @@
         </DataTemplate>
       </DataGrid.RowDetailsTemplate>
     </DataGrid>
+
+    <materialDesign:DialogHost Identifier="MainDialogHost"></materialDesign:DialogHost>
+
   </Grid>
 </Window>
