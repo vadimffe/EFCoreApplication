@@ -6,6 +6,7 @@ Simple EFCore application without any special reason.
 * SQLight
 * WPF Material Design
 * WPF
+* LiveCharts2
 
 
 ![image](https://user-images.githubusercontent.com/72302395/152547330-a0c836c2-7589-4454-bca8-645fde1c54b7.png)
