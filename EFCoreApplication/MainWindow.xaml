@@ -125,7 +125,7 @@
       </DataGrid.RowDetailsTemplate>
     </DataGrid>
 
-    <materialDesign:DialogHost Identifier="MainDialogHost"></materialDesign:DialogHost>
+    <materialDesign:DialogHost Grid.Column="0" Grid.Row="0" Grid.RowSpan="9" Grid.ColumnSpan="7" Identifier="MainDialogHost"></materialDesign:DialogHost>
 
   </Grid>
 </Window>
