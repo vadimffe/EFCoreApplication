@@ -23,6 +23,9 @@ namespace EFCoreApplication.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ProjectName")
                         .HasColumnType("TEXT");
 
@@ -54,6 +57,9 @@ namespace EFCoreApplication.Migrations
 
                     b.Property<string>("ProjectNumber")
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Revenue")
+                        .HasColumnType("REAL");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");

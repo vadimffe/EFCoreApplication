@@ -9,6 +9,7 @@ namespace EFCoreApplication.Models
     public Guid Id { get; set; }
     public string ProjectName { get; set; }
     public string ProjectNumber { get; set; }
+    public DateTime CreationDate { get; set; }
 
     public virtual ICollection<TaskModel> Tasks { get; set; }
   }

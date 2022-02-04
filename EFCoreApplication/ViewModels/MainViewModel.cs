@@ -1,6 +1,9 @@
 ﻿using EFCoreApplication.Commands;
 using EFCoreApplication.Data;
 using EFCoreApplication.Models;
+using LiveChartsCore;
+using LiveChartsCore.Kernel.Sketches;
+using LiveChartsCore.SkiaSharpView;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,13 +21,19 @@ namespace EFCoreApplication.ViewModels
       this.startDate = DateTime.Now;
       this.numList = new List<int>();
 
+      this.GaugeTotal = 10;
+      this.initialRotation = 160;
+      this.MaxAngle = 30;
+
       this.InitializeNumList();
       this.InitializeProjectList();
       this.InitializeTaskList();
+      this.InitializePieChart();
+      this.InitializeColumnChart();
+      this.InitializeGaugeChart();
     }
 
     public ICommand AddProjectToDatabaseCommand => new RelayCommand(param => this.AddProjectToDatabase());
-
     public ICommand AddTaskToDatabaseCommand => new RelayCommand(param => this.AddTaskToDatabase());
 
     private void AddTaskToDatabase()
@@ -42,6 +51,7 @@ namespace EFCoreApplication.ViewModels
           Text = this.projectText,
           StartDate = this.startDate,
           Type = this.projectType,
+          Revenue = this.revenue,
           Duration = this.duration,
           Progress = this.progress,
           ProjectId = projectId,
@@ -52,8 +62,16 @@ namespace EFCoreApplication.ViewModels
 
       this.ProjectType = string.Empty;
       this.ProjectText = string.Empty;
+      this.Revenue = 0;
+      this.SelectedProjectNumber = new ProjectModel();
+      this.Progress = 0;
+      this.ProgressValue = string.Empty;
+      this.StartDate = DateTime.Now;
+      this.Duration = 1;
 
       this.InitializeTaskList();
+      this.InitializePieChart();
+      this.InitializeColumnChart();
     }
 
     private void InitializeProjectList()
@@ -64,9 +82,10 @@ namespace EFCoreApplication.ViewModels
         Id = x.Id,
         ProjectName = x.ProjectName,
         ProjectNumber = x.ProjectNumber,
-      });
+        Tasks = x.Tasks,
+      }).OrderBy(o => o.ProjectNumber);
 
-      this.ProjectNumberList = new ObservableCollection<ProjectModel>(projectNumbers);
+      this.Projects = new ObservableCollection<ProjectModel>(projectNumbers);
     }
 
     private void InitializeTaskList()
@@ -80,6 +99,7 @@ namespace EFCoreApplication.ViewModels
         Progress = Math.Round(s.Progress * 10),
         ProjectNumber = context.Projects.FirstOrDefault(c => c.Id == s.ProjectId).ProjectNumber,
         ProjectId = s.ProjectId,
+        Revenue = s.Revenue,
         StartDate = s.StartDate,
         Text = s.Text,
         Type = s.Type,
@@ -88,12 +108,53 @@ namespace EFCoreApplication.ViewModels
       this.TasksTable = new ObservableCollection<TaskModel>(tasks);
     }
 
+    private void InitializePieChart()
+    {
+      IEnumerable<ISeries> projectNumbers = this.TasksTable.Select(x =>
+      new PieSeries<double>
+      {
+        Values = new List<double> { x.Revenue },
+        Name = x.Text,
+      });
+
+      this.Series = new ObservableCollection<ISeries>(projectNumbers);
+    }
+
+    private void InitializeColumnChart()
+    {
+      IEnumerable<ISeries> projectNumbers = this.TasksTable.Select(x =>
+      new ColumnSeries<double>
+      {
+        Values = new List<double> { x.Revenue },
+        Name = x.Text,
+      });
+
+      this.ColumnSeries = new ObservableCollection<ISeries>(projectNumbers);
+    }
+
+    private void InitializeGaugeChart()
+    {
+      IEnumerable<ISeries> Series = new List<ISeries>
+                {
+                    new PieSeries<double> { Values = new List<double> { 40 }, Name = "a" },
+                };
+
+      IEnumerable<ISeries> projectNumbers = this.TasksTable.Select(x =>
+      new PieSeries<double>
+      {
+        Values = new List<double> { 6 },
+      });
+
+      this.GaugeSeries = new ObservableCollection<ISeries>(Series);
+    }
+
     private void InitializeNumList()
     {
       this.numList.Add(1);
       this.numList.Add(2);
       this.numList.Add(3);
       this.numList.Add(4);
+      this.numList.Add(5);
     }
 
     private void AddProjectToDatabase()
@@ -214,6 +275,83 @@ namespace EFCoreApplication.ViewModels
       }
     }
 
+    private double revenue;
+    public double Revenue
+    {
+      get => this.revenue;
+      set
+      {
+        this.revenue = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private double gaugeTotal;
+    public double GaugeTotal
+    {
+      get => this.gaugeTotal;
+      set
+      {
+        this.gaugeTotal = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private double maxAngle;
+    public double MaxAngle
+    {
+      get => this.maxAngle;
+      set
+      {
+        this.maxAngle = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private double initialRotation;
+    public double InitialRotation
+    {
+      get => this.initialRotation;
+      set
+      {
+        this.initialRotation = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private IEnumerable<ISeries> series;
+    public IEnumerable<ISeries> Series
+    {
+      get => this.series;
+      set
+      {
+        this.series = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private IEnumerable<ISeries> columnSeries;
+    public IEnumerable<ISeries> ColumnSeries
+    {
+      get => this.columnSeries;
+      set
+      {
+        this.columnSeries = value;
+        this.OnPropertyChanged();
+      }
+    }
+
+    private IEnumerable<ISeries> gaugeSeries;
+    public IEnumerable<ISeries> GaugeSeries
+    {
+      get => this.gaugeSeries;
+      set
+      {
+        this.gaugeSeries = value;
+        this.OnPropertyChanged();
+      }
+    }
+
     private List<int> numList;
     public List<int> NumList
     {
@@ -225,15 +363,23 @@ namespace EFCoreApplication.ViewModels
       }
     }
 
-    private ObservableCollection<ProjectModel> projectNumberList;
-    public ObservableCollection<ProjectModel> ProjectNumberList
+    private ObservableCollection<ProjectModel> projects;
+    public ObservableCollection<ProjectModel> Projects
     {
-      get => this.projectNumberList;
+      get => this.projects;
       set
       {
-        this.projectNumberList = value;
+        this.projects = value;
         this.OnPropertyChanged();
       }
     }
+
+    public List<ICartesianAxis> XAxis { get; set; } = new List<ICartesianAxis>
+    {
+      new Axis
+      {
+          IsVisible = false
+      }
+    };
   }
 }

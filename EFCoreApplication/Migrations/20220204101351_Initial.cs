@@ -15,7 +15,8 @@ namespace EFCoreApplication.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     ProjectName = table.Column<string>(type: "TEXT", nullable: true),
-                    ProjectNumber = table.Column<string>(type: "TEXT", nullable: true)
+                    ProjectNumber = table.Column<string>(type: "TEXT", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,6 +35,7 @@ namespace EFCoreApplication.Migrations
                     Progress = table.Column<double>(type: "REAL", nullable: false),
                     ParentId = table.Column<int>(type: "INTEGER", nullable: true),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
+                    Revenue = table.Column<double>(type: "REAL", nullable: false),
                     ProjectId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>

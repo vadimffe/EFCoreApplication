@@ -13,6 +13,7 @@ namespace EFCoreApplication.Models
     public double Progress { get; set; }
     public int? ParentId { get; set; }
     public string Type { get; set; }
+    public double Revenue { get; set; }
 
     public Guid ProjectId { get; set; }
     public virtual ProjectModel ProjectModel { get; set; }
