@@ -180,18 +180,29 @@ namespace EFCoreApplication.ViewModels
       }
       else
       {
-        SampleDialog view = new SampleDialog
+        NotificationDialog view = new NotificationDialog
         {
-          DataContext = new SampleDialogViewModel()
+          DataContext = new NotificationViewModel()
         };
 
-        object result = await DialogHost.Show(view, "MainDialogHost", ExtendedOpenedEventHandler, ExtendedClosingEventHandler);
+        object result = await DialogHost.Show(view, "MainDialogHost", this.ExtendedOpenedEventHandler, this.ExtendedNotificationClosingEventHandler);
       }
     }
 
     private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
     {
       Console.WriteLine("You could intercept the open and affect the dialog using eventArgs.Session.");
+    }
+
+    private void ExtendedNotificationClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
+    {
+      if ((bool)eventArgs.Parameter == false) return;
+
+      eventArgs.Cancel();
+
+      Task.Delay(TimeSpan.FromSeconds(0))
+        .ContinueWith((t, _) => eventArgs.Session.Close(false), null,
+            TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     private void ExtendedClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)

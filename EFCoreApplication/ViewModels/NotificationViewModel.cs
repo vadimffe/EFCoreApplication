@@ -1,21 +1,13 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace EFCoreApplication.ViewModels
 {
-  public class SampleDialogViewModel : BaseViewModel
+  public class NotificationViewModel : BaseViewModel
   {
-    private string name;
-    public string Name
-    {
-      get => this.name;
-      set
-      {
-        this.name = value;
-        this.OnPropertyChanged();
-      }
-    }
-
     private string errorText;
     public string ErrorText
     {
