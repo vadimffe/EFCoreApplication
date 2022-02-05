@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:EFCoreApplication"
         xmlns:viewModels="clr-namespace:EFCoreApplication.ViewModels" 
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
-        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+        xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF" 
+        xmlns:domain="clr-namespace:EFCoreApplication.Validation"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
         Title="Simple EFCore Application" Height="700" Width="1000"
@@ -79,7 +80,15 @@
     <TextBlock Text="{Binding ProgressValue}" Margin="20,0,0,0" Grid.Row="5" Grid.Column="6" VerticalAlignment="Center" />
     <TextBlock Text="Revenue:" Grid.Row="7" Grid.Column="4" VerticalAlignment="Center" />
 
-    <TextBox Grid.Row="2" Text="{Binding ProjectNumber}" Grid.Column="2" VerticalAlignment="Center"></TextBox>
+    <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center">
+      <TextBox.Text>
+        <Binding Path="ProjectNumber" UpdateSourceTrigger="PropertyChanged">
+          <Binding.ValidationRules>
+            <domain:ProjectNumberValidation ValidatesOnTargetUpdated="True" />
+          </Binding.ValidationRules>
+        </Binding>
+      </TextBox.Text>
+    </TextBox>
     <TextBox Grid.Row="5" Text="{Binding ProjectText}" Grid.Column="2" VerticalAlignment="Center"></TextBox>
     <DatePicker Grid.Row="6" SelectedDate="{Binding StartDate}" Grid.Column="2" VerticalAlignment="Center"></DatePicker>
     <ComboBox Grid.Row="4" ItemsSource="{Binding NumList}" SelectedValue="{Binding Duration}" Grid.Column="5" VerticalAlignment="Center"></ComboBox>

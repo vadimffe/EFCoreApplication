@@ -187,23 +187,6 @@ namespace EFCoreApplication.ViewModels
 
       this.InitializeProjectList();
 
-      if (string.IsNullOrEmpty(this.ProjectNumber))
-      {
-        this.NotificationViewModel.ErrorText = "Enter project number first!";
-        object result = await DialogHost.Show(view, "MainDialogHost", this.ExtendedOpenedEventHandler, this.ExtendedNotificationClosingEventHandler);
-        return;
-      }
-
-      int n;
-      bool isNumeric = int.TryParse(this.ProjectNumber, out n);
-
-      if (!isNumeric)
-      {
-        this.NotificationViewModel.ErrorText = "Project number should be a number without letters!";
-        object result = await DialogHost.Show(view, "MainDialogHost", this.ExtendedOpenedEventHandler, this.ExtendedNotificationClosingEventHandler);
-        return;
-      }
-
       if (this.Projects.Any(w => w.ProjectNumber == this.ProjectNumber))
       {
         int nextNumber = Enumerable.Range(1, Int32.MaxValue).Except(this.Projects.Select(w => Int32.Parse(w.ProjectNumber))).First();
