@@ -17,22 +17,15 @@
       <RowDefinition />
       <RowDefinition />
     </Grid.RowDefinitions>
-    <TextBlock Grid.Row="2" Text="{Binding ErrorText}"/>
+    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,20,20,20" Foreground="Black" Grid.Row="1" Text="{Binding ErrorText}"/>
     <StackPanel Orientation="Horizontal" Grid.Row="3"
-                    Margin="0 16 0 0">
+                    Margin="0 16 0 0" HorizontalAlignment="Center">
       <Button IsDefault="True" Style="{DynamicResource MaterialDesignFlatButton}"
-                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
+              Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
         <Button.CommandParameter>
           <system:Boolean>True</system:Boolean>
         </Button.CommandParameter>
-        OK
-      </Button>
-      <Button IsCancel="True" Margin="8 0 0 0" Style="{DynamicResource MaterialDesignFlatButton}"
-                    Command="{x:Static wpf:DialogHost.CloseDialogCommand}">
-        <Button.CommandParameter>
-          <system:Boolean>False</system:Boolean>
-        </Button.CommandParameter>
-        CANCEL
+        UNDERSTOOD
       </Button>
     </StackPanel>
   </Grid>

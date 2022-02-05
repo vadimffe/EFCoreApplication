@@ -23,8 +23,6 @@ namespace EFCoreApplication
 
       Configuration = builder.Build();
 
-      //Console.WriteLine(Configuration.GetConnectionString("BloggingDatabase"));
-
       var serviceCollection = new ServiceCollection();
       ConfigureServices(serviceCollection);
 

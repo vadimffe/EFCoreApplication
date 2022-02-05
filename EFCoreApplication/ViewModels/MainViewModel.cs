@@ -19,8 +19,12 @@ namespace EFCoreApplication.ViewModels
 {
   public class MainViewModel : BaseViewModel
   {
+    public NotificationViewModel NotificationViewModel { get; set; }
+
     public MainViewModel()
     {
+      this.NotificationViewModel = new NotificationViewModel();
+
       this.startDate = DateTime.Now;
       this.numList = new List<int>();
 
@@ -36,45 +40,59 @@ namespace EFCoreApplication.ViewModels
       this.InitializeGaugeChart();
     }
 
-    public ICommand AddProjectToDatabaseCommand => new AsyncRelayCommand(param => this.AddProjectToDatabase());
-    public ICommand AddTaskToDatabaseCommand => new RelayCommand(param => this.AddTaskToDatabase());
+    public ICommand AddProjectToDatabaseCommand => new AsyncRelayCommand(param => this.AddProjectToDatabaseAsync());
+    public ICommand AddTaskToDatabaseCommand => new AsyncRelayCommand(param => this.AddTaskToDatabaseAsync());
 
-    private void AddTaskToDatabase()
+    private async Task AddTaskToDatabaseAsync()
     {
-      Random rnd = new Random();
-
-      using SQLiteDBContext context = new SQLiteDBContext();
-      if (this.SelectedProjectNumber != null && this.SelectedProjectNumber.Id != Guid.Empty)
+      if (this.SelectedProjectNumber != null)
       {
-        Guid projectId = context.Projects.FirstOrDefault(c => c.ProjectNumber == this.selectedProjectNumber.ProjectNumber).Id;
+        Random rnd = new Random();
 
-        context.Tasks.Add(new TaskModel
+        using SQLiteDBContext context = new SQLiteDBContext();
+        if (this.SelectedProjectNumber != null && this.SelectedProjectNumber.Id != Guid.Empty)
         {
-          ProjectNumber = this.SelectedProjectNumber.ProjectNumber,
-          Text = this.projectText,
-          StartDate = this.startDate,
-          Type = this.projectType,
-          Revenue = this.revenue,
-          Duration = this.duration,
-          Progress = this.progress,
-          ProjectId = projectId,
-        });
+          Guid projectId = context.Projects.FirstOrDefault(c => c.ProjectNumber == this.selectedProjectNumber.ProjectNumber).Id;
 
-        context.SaveChangesAsync();
+          context.Tasks.Add(new TaskModel
+          {
+            ProjectNumber = this.SelectedProjectNumber.ProjectNumber,
+            Text = this.projectText,
+            StartDate = this.startDate,
+            Type = this.projectType,
+            Revenue = this.revenue,
+            Duration = this.duration,
+            Progress = this.progress,
+            ProjectId = projectId,
+          });
+
+          await context.SaveChangesAsync();
+        }
+
+        this.ProjectType = string.Empty;
+        this.ProjectText = string.Empty;
+        this.Revenue = 0;
+        this.SelectedProjectNumber = new ProjectModel();
+        this.Progress = 0;
+        this.ProgressValue = string.Empty;
+        this.StartDate = DateTime.Now;
+        this.Duration = 1;
+
+        this.InitializeTaskList();
+        this.InitializePieChart();
+        this.InitializeColumnChart();
       }
+      else
+      {
+        NotificationDialog view = new NotificationDialog
+        {
+          DataContext = this.NotificationViewModel
+        };
 
-      this.ProjectType = string.Empty;
-      this.ProjectText = string.Empty;
-      this.Revenue = 0;
-      this.SelectedProjectNumber = new ProjectModel();
-      this.Progress = 0;
-      this.ProgressValue = string.Empty;
-      this.StartDate = DateTime.Now;
-      this.Duration = 1;
+        this.NotificationViewModel.ErrorText = "Select project number first!";
+        object result = await DialogHost.Show(view, "MainDialogHost", this.ExtendedOpenedEventHandler, this.ExtendedNotificationClosingEventHandler);
 
-      this.InitializeTaskList();
-      this.InitializePieChart();
-      this.InitializeColumnChart();
+      }
     }
 
     private void InitializeProjectList()
@@ -160,38 +178,58 @@ namespace EFCoreApplication.ViewModels
       this.numList.Add(5);
     }
 
-    private async Task AddProjectToDatabase()
+    private async Task AddProjectToDatabaseAsync()
     {
-      if (!string.IsNullOrEmpty(this.ProjectNumber))
+      NotificationDialog view = new NotificationDialog
       {
-        using (SQLiteDBContext context = new SQLiteDBContext())
-        {
-          if (!string.IsNullOrEmpty(this.ProjectNumber))
-          {
-            context.Projects.Add(new ProjectModel { ProjectNumber = this.ProjectNumber });
+        DataContext = this.NotificationViewModel
+      };
 
-            await context.SaveChangesAsync();
-          }
-        }
+      this.InitializeProjectList();
 
-        this.InitializeProjectList();
-
-        this.ProjectNumber = string.Empty;
-      }
-      else
+      if (string.IsNullOrEmpty(this.ProjectNumber))
       {
-        NotificationDialog view = new NotificationDialog
-        {
-          DataContext = new NotificationViewModel()
-        };
-
+        this.NotificationViewModel.ErrorText = "Enter project number first!";
         object result = await DialogHost.Show(view, "MainDialogHost", this.ExtendedOpenedEventHandler, this.ExtendedNotificationClosingEventHandler);
+        return;
       }
+
+      int n;
+      bool isNumeric = int.TryParse(this.ProjectNumber, out n);
+
+      if (!isNumeric)
+      {
+        this.NotificationViewModel.ErrorText = "Project number should be a number without letters!";
+        object result = await DialogHost.Show(view, "MainDialogHost", this.ExtendedOpenedEventHandler, this.ExtendedNotificationClosingEventHandler);
+        return;
+      }
+
+      if (this.Projects.Any(w => w.ProjectNumber == this.ProjectNumber))
+      {
+        int nextNumber = Enumerable.Range(1, Int32.MaxValue).Except(this.Projects.Select(w => Int32.Parse(w.ProjectNumber))).First();
+
+        this.NotificationViewModel.ErrorText = String.Format("{0} {1}: {2}", "Entered project number already exists!", "Next available number is", nextNumber);
+        object result = await DialogHost.Show(view, "MainDialogHost", this.ExtendedOpenedEventHandler, this.ExtendedNotificationClosingEventHandler);
+        return;
+      }
+
+      using (SQLiteDBContext context = new SQLiteDBContext())
+      {
+        if (!string.IsNullOrEmpty(this.ProjectNumber))
+        {
+          context.Projects.Add(new ProjectModel { ProjectNumber = this.ProjectNumber });
+
+          await context.SaveChangesAsync();
+        }
+      }
+
+      this.InitializeProjectList();
+      this.ProjectNumber = string.Empty;
     }
 
     private void ExtendedOpenedEventHandler(object sender, DialogOpenedEventArgs eventargs)
     {
-      Console.WriteLine("You could intercept the open and affect the dialog using eventArgs.Session.");
+      // something here
     }
 
     private void ExtendedNotificationClosingEventHandler(object sender, DialogClosingEventArgs eventArgs)
