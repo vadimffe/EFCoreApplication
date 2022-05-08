@@ -6,7 +6,6 @@ namespace EFCoreApplication.Data
   public class SQLiteDBContext : DbContext
   {
     public virtual DbSet<ProjectModel> Projects { get; set; }
-    //public virtual DbSet<ProjectScheduleModel> ProjectScheduleModel { get; set; }
     public virtual DbSet<TaskModel> Tasks { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)

@@ -22,14 +22,6 @@ namespace EFCoreApplication.Validation
         return new ValidationResult(false, "Project number should be a number without letters");
       }
 
-      //if (this.Projects.Any(w => w.ProjectNumber == this.ProjectNumber))
-      //{
-      //  int nextNumber = Enumerable.Range(1, Int32.MaxValue).Except(this.Projects.Select(w => Int32.Parse(w.ProjectNumber))).First();
-
-      //  string errorMessage = string.Format("{0} {1}: {2}", "Entered project number already exists!", "Next available number is", nextNumber);
-      //  return new ValidationResult(false, errorMessage);
-      //}
-
       return ValidationResult.ValidResult;
 		}
 	}

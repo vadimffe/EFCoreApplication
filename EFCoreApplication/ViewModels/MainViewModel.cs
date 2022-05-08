@@ -447,7 +447,7 @@ namespace EFCoreApplication.ViewModels
     {
       new Axis
       {
-          IsVisible = false
+        IsVisible = false
       }
     };
   }

@@ -31,25 +31,25 @@ namespace EFCoreApplication.Commands
 
     public bool CanExecute(object parameter)
     {
-      if (Interlocked.Read(ref isExecuting) != 0)
+      if (Interlocked.Read(ref this.isExecuting) != 0)
         return false;
 
-      return canExecute(parameter);
+      return this.canExecute(parameter);
     }
 
     public async void Execute(object parameter)
     {
-      Interlocked.Exchange(ref isExecuting, 1);
-      RaiseCanExecuteChanged();
+      Interlocked.Exchange(ref this.isExecuting, 1);
+      this.RaiseCanExecuteChanged();
 
       try
       {
-        await execute(parameter);
+        await this.execute(parameter);
       }
       finally
       {
-        Interlocked.Exchange(ref isExecuting, 0);
-        RaiseCanExecuteChanged();
+        Interlocked.Exchange(ref this.isExecuting, 0);
+        this.RaiseCanExecuteChanged();
       }
     }
   }
